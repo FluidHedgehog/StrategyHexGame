@@ -1,0 +1,67 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+
+public class UnitMovement : MonoBehaviour
+{
+    public Tilemap tilemap;
+    public UnitObject unitObject;
+
+    [SerializeField] InputManager inputManager;
+    [SerializeField] GridManager gridManager;
+
+    private PathfinderAStar pathfinder;
+
+    void Start()
+    {
+        unitObject = GetComponent<UnitObject>();
+        UpdateUnitTilePosition();
+        pathfinder = new PathfinderAStar(gridManager);
+    }
+
+    public Vector3Int GetCurrentTile() => unitObject.currentTile;
+    public Unit.MovementType GetMovementType() => unitObject.unitData.movementType;
+
+    public void MoveAlongPath(List<Vector3Int> path)
+    {
+        StartCoroutine(FollowPath(path));
+    }
+
+    private IEnumerator FollowPath(List<Vector3Int> path)
+    {
+        foreach (var tilePos in path)
+        {
+            if (gridManager.GetMovementCost(tilePos, GetMovementType(), out int cost))
+            if (unitObject.currentActionPoints < cost)
+                yield break;
+            Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
+
+            while ((Vector3.Distance(transform.position, worldPos)) > 0.01f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, worldPos, Time.deltaTime * 5f);
+                yield return null;
+            }
+
+            unitObject.currentTile = tilePos;
+            unitObject.currentActionPoints -= cost;
+        }
+    }
+
+    public void MoveTo(Vector3Int targetPosition)
+    {
+        var path = pathfinder.FindPath(unitObject.currentTile, targetPosition, unitObject.unitData.movementType);
+        if (path != null)
+        {
+            StartCoroutine(FollowPath(path));
+        }
+    }
+
+    void UpdateUnitTilePosition()
+    {
+        if (tilemap != null)
+        {
+            unitObject.currentTile = tilemap.WorldToCell(transform.position);
+        }
+    }
+}
