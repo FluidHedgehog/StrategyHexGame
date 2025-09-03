@@ -4,7 +4,7 @@ using UnityEngine.Tilemaps;
 
 public class PathfinderController : MonoBehaviour
 {
-    private GridManager gridManager;
+    private PathfinderInitializer gridManager;
 
     private PathfinderAStar pathfinder;
     private PathfinderVFX pathfinderVFX;
@@ -15,7 +15,7 @@ public class PathfinderController : MonoBehaviour
 
     private void Awake()
     {
-        gridManager = FindFirstObjectByType<GridManager>();
+        gridManager = FindFirstObjectByType<PathfinderInitializer>();
         pathfinderVFX = FindFirstObjectByType<PathfinderVFX>();
         pathfinder = new PathfinderAStar(gridManager);
     }

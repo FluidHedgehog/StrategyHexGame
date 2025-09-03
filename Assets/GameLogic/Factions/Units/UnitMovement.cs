@@ -9,7 +9,7 @@ public class UnitMovement : MonoBehaviour
     public UnitObject unitObject;
 
     [SerializeField] InputManager inputManager;
-    [SerializeField] GridManager gridManager;
+    [SerializeField] PathfinderInitializer gridManager;
 
     private PathfinderAStar pathfinder;
 

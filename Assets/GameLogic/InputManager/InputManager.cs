@@ -14,7 +14,7 @@ public class InputManager : MonoBehaviour
 
     [SerializeField] CameraController cameraController;
     [SerializeField] PathfinderController pathfinderController;
-    [SerializeField] GridManager gridManager;
+    [SerializeField] PathfinderInitializer gridManager;
     [SerializeField] Tilemap tilemap;
 
     void Awake()
@@ -22,7 +22,7 @@ public class InputManager : MonoBehaviour
         input = new InputSystem_Actions();
         cameraController = FindFirstObjectByType<CameraController>();
         pathfinderController = FindFirstObjectByType<PathfinderController>();
-        gridManager = FindFirstObjectByType<GridManager>();
+        gridManager = FindFirstObjectByType<PathfinderInitializer>();
     }
 
     void OnEnable() => input.Enable();

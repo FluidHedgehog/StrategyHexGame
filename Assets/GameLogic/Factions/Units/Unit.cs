@@ -9,6 +9,7 @@ public class Unit : ScriptableObject
     [SerializeField] string unitName;
     [SerializeField] string type;
     [SerializeField] string description;
+    [SerializeField] Sprite icon;
 
     public enum MovementType { Walk, Swim, Fly };
     public MovementType movementType;
@@ -40,6 +41,6 @@ public class Unit : ScriptableObject
 
     [SerializeField] List<PrefabAssetType> advancesTo;
 
-    //[SerializeField] List<Abilities> abilities;
+    [SerializeField] List<Abilities> abilities;
 
 }

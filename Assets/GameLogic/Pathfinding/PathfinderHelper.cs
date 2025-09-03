@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class PathfinderHelper
 {
-    public static int ComputePathCost(GridManager grid, List<Vector3Int> path, Unit.MovementType moveType)
+    public static int ComputePathCost(PathfinderInitializer grid, List<Vector3Int> path, Unit.MovementType moveType)
     {
         if (path == null || path.Count < 2) return 0;
         int cost = 0;
@@ -16,7 +16,7 @@ public static class PathfinderHelper
         return cost;
     }
 
-    public static List<Vector3Int> TrimPathToBudget(GridManager grid, List<Vector3Int> path, Unit.MovementType moveType, int budget)
+    public static List<Vector3Int> TrimPathToBudget(PathfinderInitializer grid, List<Vector3Int> path, Unit.MovementType moveType, int budget)
     {
         if (path == null || path.Count == 0) return path;
 
@@ -33,7 +33,7 @@ public static class PathfinderHelper
         return trimmedPath;
     }
 
-    public static List<Vector3Int> GetReachableTiles(GridManager grid, Vector3Int start, Unit.MovementType moveType, int maxCost)
+    public static List<Vector3Int> GetReachableTiles(PathfinderInitializer grid, Vector3Int start, Unit.MovementType moveType, int maxCost)
     {
         var reachable = new List<Vector3Int>();
         var frontier = new Queue<Vector3Int>();
@@ -64,60 +64,22 @@ public static class PathfinderHelper
         return reachable;
     }
 
-    /*public static List<Vector3Int> GetNeighbors(Vector3Int pos)
+    public static int GetHexDistance(Vector3Int start, Vector3Int goal)
     {
-        return new List<Vector3Int>
-        {
-         //   new Vector3Int(pos.x + 1, pos.y, 0),
-        //    new Vector3Int(pos.x - 1, pos.y, 0),
-        //    new Vector3Int(pos.x,     pos.y + 1, 0),
-        //    new Vector3Int(pos.x,     pos.y - 1, 0),
-        //    new Vector3Int(pos.x + 1, pos.y - 1, 0),
-        //    new Vector3Int(pos.x - 1, pos.y + 1, 0),
-        //    new Vector3Int(pos.x + 1, pos.y + 1, 0),
-            new Vector3Int(pos.x - 1, pos.y - 1, 0)
-        };
+        int dx = goal.x - start.x;
+        int dy = goal.y - start.y;
+        int dz = -(dx + dy);
+
+        return (Mathf.Abs(dx) + Mathf.Abs(dy) + Mathf.Abs(dz)) / 2;
     }
 
-    private static readonly Vector2Int[] axialDirections = new[]
+    public static int CalculateMovementCost(PathfinderInitializer grid, Vector3Int from, Vector3Int to, Unit.MovementType moveType)
     {
-        new Vector2Int(+1,  0),
-        new Vector2Int(+1, -1),
-        new Vector2Int( 0, -1),
-        new Vector2Int(-1,  0),
-        new Vector2Int(-1, +1),
-        new Vector2Int( 0, +1),
-    };
+        if (!grid.GetMovementCost(to, moveType, out int moveCost))
+            return int.MaxValue; // Impassable
 
-    public static IEnumerable<Vector3Int> GetNeighbors(Vector3Int axialPos)
-    {
-        foreach (var dir in axialDirections)
-        {
-            yield return new Vector3Int(axialPos.x + dir.x, axialPos.y + dir.y, 0);
-        }
-    }*/
-
-    private static readonly Vector3Int[] EvenRowNeighbors = new[]
-    {
-    new Vector3Int(+1,  0, 0),
-    new Vector3Int( 0, +1, 0),
-    new Vector3Int(-1, +1, 0),
-    new Vector3Int(-1,  0, 0),
-    new Vector3Int(-1, -1, 0),
-    new Vector3Int( 0, -1, 0)
-    };
-
-
-    private static readonly Vector3Int[] OddRowNeighbors = new[]
-    {
-    new Vector3Int(+1,  0, 0),
-    new Vector3Int(+1, +1, 0),
-    new Vector3Int( 0, +1, 0),
-    new Vector3Int(-1,  0, 0),
-    new Vector3Int( 0, -1, 0),
-    new Vector3Int(+1, -1, 0)
-    };
-
+        return moveCost;
+    }
 
     public static List<Vector3Int> GetNeighbors(Vector3Int pos)
     {
@@ -131,8 +93,24 @@ public static class PathfinderHelper
         return neighbors;
     }
 
+    private static readonly Vector3Int[] EvenRowNeighbors = new[]
+    {
+    new Vector3Int(+1,  0, 0),
+    new Vector3Int( 0, +1, 0),
+    new Vector3Int(-1, +1, 0),
+    new Vector3Int(-1,  0, 0),
+    new Vector3Int(-1, -1, 0),
+    new Vector3Int( 0, -1, 0)
+    };
 
-
-
+    private static readonly Vector3Int[] OddRowNeighbors = new[]
+    {
+    new Vector3Int(+1,  0, 0),
+    new Vector3Int(+1, +1, 0),
+    new Vector3Int( 0, +1, 0),
+    new Vector3Int(-1,  0, 0),
+    new Vector3Int( 0, -1, 0),
+    new Vector3Int(+1, -1, 0)
+    };
 
 }

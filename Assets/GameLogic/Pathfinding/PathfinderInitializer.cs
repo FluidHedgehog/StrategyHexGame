@@ -3,14 +3,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GridManager : MonoBehaviour
+public class PathfinderInitializer : MonoBehaviour
 {
     [SerializeField] public Tilemap map;
 
-
     public Dictionary<TileBase, TileData> dataFromTerrain;
     [SerializeField] List<TileData> tileDatas;
-
 
     public Dictionary<Vector3Int, GameObject> unitPositions;
     [SerializeField] List<GameObject> unitsInGame;

@@ -15,6 +15,7 @@ MonoBehaviour:
   unitName: Archer
   type: Range
   description: Dupa
+  icon: {fileID: 0}
   movementType: 0
   healthPoints: 40
   strengthPoints: 6
@@ -30,6 +31,9 @@ MonoBehaviour:
   fuelUpkeep: 0
   crystalCost: 0
   crystalUpkeep: 0
-  maxActionPoints: 4
+  maxActionPoints: 6
   baseLuckPoints: 2
   advancesTo: 
+  abilities:
+  - {fileID: 11400000, guid: 3a3938ea38d1fb945aa76650a21c03b8, type: 2}
+  - {fileID: 11400000, guid: 53b4161922e73f042b20a5b76a22b4e9, type: 2}
