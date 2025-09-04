@@ -72,7 +72,7 @@ public class PathfinderAStar
                     neighbor.gCost = tentativeGCost; //Set gCost
                     neighbor.hCost = PathfinderHelper.GetHexDistance(neighborPos, goal); //Set hCost
                     neighbor.Parent = currentNode; //Set parent
-                    
+
                     openSet.Enqueue(neighbor, neighbor.fCost); //Add to open set
                     openSetDict[neighborPos] = neighbor;
                 }
@@ -96,6 +96,7 @@ public class PathfinderAStar
 
         return path; //Return the final path
     }
-
-    // To implement priority queue for openSet i should replace the List with a PriorityQueue, but it does not work since PriorityQueue is not available in all versions of Unity. 
 }
+
+// To implement obstacles, we can modify the GetNeighbors method to skip over tiles that are not walkable.
+// This can be done by checking the tile's properties in the PathfinderInitializer class. I need to put this fun

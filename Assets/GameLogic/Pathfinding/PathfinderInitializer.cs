@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -68,6 +69,11 @@ public class PathfinderInitializer : MonoBehaviour
 
     public bool GetMovementCost(Vector3Int gridPosition, Unit.MovementType movementType, out int cost)
     {
+        if (PathfinderHelper.DoesTileHaveUnit(this, gridPosition))
+        {
+            cost = int.MaxValue;
+            return false;
+        }
         var tileData = GetTileData(gridPosition);
         if (tileData == null)
         {

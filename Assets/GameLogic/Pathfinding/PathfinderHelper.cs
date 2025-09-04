@@ -33,6 +33,11 @@ public static class PathfinderHelper
         return trimmedPath;
     }
 
+    public static bool DoesTileHaveUnit(PathfinderInitializer grid, Vector3Int position)
+    {
+        return grid.unitPositions.ContainsKey(position);
+    }
+
     public static List<Vector3Int> GetReachableTiles(PathfinderInitializer grid, Vector3Int start, Unit.MovementType moveType, int maxCost)
     {
         var reachable = new List<Vector3Int>();
@@ -49,6 +54,9 @@ public static class PathfinderHelper
             foreach (var neighbor in GetNeighbors(current))
             {
                 if (!grid.GetMovementCost(neighbor, moveType, out int moveCost))
+                    continue;
+
+                if (DoesTileHaveUnit(grid, neighbor))
                     continue;
 
                 int newCost = costSoFar[current] + moveCost;

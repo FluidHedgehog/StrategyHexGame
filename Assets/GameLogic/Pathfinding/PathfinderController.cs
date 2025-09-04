@@ -5,11 +5,12 @@ using UnityEngine.Tilemaps;
 public class PathfinderController : MonoBehaviour
 {
     private PathfinderInitializer gridManager;
+    private InputManager inputManager;
 
     private PathfinderAStar pathfinder;
     private PathfinderVFX pathfinderVFX;
 
-    private HashSet<Vector3Int> _reachable;
+    //private HashSet<Vector3Int> _reachable;
 
     [SerializeField] GameObject selectedUnit;
 
@@ -17,7 +18,23 @@ public class PathfinderController : MonoBehaviour
     {
         gridManager = FindFirstObjectByType<PathfinderInitializer>();
         pathfinderVFX = FindFirstObjectByType<PathfinderVFX>();
+        inputManager = FindFirstObjectByType<InputManager>();
         pathfinder = new PathfinderAStar(gridManager);
+    }
+
+    private void Update()
+    {
+        if (selectedUnit != null)
+        {
+            var path = DetectPath(inputManager.gridPosition);
+            if (path != null && path.Count > 0)
+            {
+                pathfinderVFX.ClearHighlights();
+                pathfinderVFX.HighlightPath(path);
+            }
+
+        }
+        else return;
     }
 
     public void Controller(Vector3Int gridPosition)
@@ -26,7 +43,7 @@ public class PathfinderController : MonoBehaviour
         {
             DetectUnit(gridPosition);
         }
-        else 
+        else
         {
             MoveUnit(gridPosition);
         }
@@ -40,7 +57,7 @@ public class PathfinderController : MonoBehaviour
         selectedUnit = unit;
 
         var reachable = DetectReachableTiles(unit.GetComponent<UnitMovement>());
-        _reachable = new HashSet<Vector3Int>(reachable);
+        //_reachable = new HashSet<Vector3Int>(reachable);
 
         pathfinderVFX.ClearHighlights();
         pathfinderVFX.HighlightAvailableTiles(reachable);
@@ -65,7 +82,6 @@ public class PathfinderController : MonoBehaviour
             selectedUnit.GetComponent<UnitMovement>().GetCurrentTile(), targetTile,
             selectedUnit.GetComponent<UnitMovement>().GetMovementType()
         );
-
         if (path == null) return null;
         else return path;
     }

@@ -29,4 +29,7 @@ public class PathfinderVFX : MonoBehaviour
     {
         hoverMap.ClearAllTiles();
     }
+
+    // To set Highlight Path before the movement will begin, I should call HighlightPath method from PathfinderController in the MoveUnit method.
+    
 }
