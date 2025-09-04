@@ -29,7 +29,7 @@ public class PathfinderController : MonoBehaviour
             var path = DetectPath(inputManager.gridPosition);
             if (path != null && path.Count > 0)
             {
-                pathfinderVFX.ClearHighlights();
+                pathfinderVFX.ClearPath();
                 pathfinderVFX.HighlightPath(path);
             }
 

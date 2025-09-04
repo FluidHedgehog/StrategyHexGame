@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 public class PathfinderVFX : MonoBehaviour
 {
     [SerializeField] Tilemap hoverMap;
+    [SerializeField] Tilemap stepMap;
     [SerializeField] TileBase availableTile;
     [SerializeField] TileBase pathTile;
 
@@ -21,9 +22,10 @@ public class PathfinderVFX : MonoBehaviour
     {
         foreach (var step in path)
         {
-            hoverMap.SetTile(step, pathTile);
+            stepMap.SetTile(step, pathTile);
         }
     }
+    // To hover path from the unit to the mouse position, I should call HighlightPath method from PathfinderController in the MoveUnit method.
 
     public void ClearHighlights()
     {
@@ -31,5 +33,10 @@ public class PathfinderVFX : MonoBehaviour
     }
 
     // To set Highlight Path before the movement will begin, I should call HighlightPath method from PathfinderController in the MoveUnit method.
-    
+
+    public void ClearPath()
+    {
+        stepMap.ClearAllTiles();
+    }
+
 }
