@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,15 +10,16 @@ public class UnitMovement : MonoBehaviour
     public UnitObject unitObject;
 
     [SerializeField] InputManager inputManager;
-    [SerializeField] PathfinderInitializer gridManager;
+    [SerializeField] GridManager gridManager;
+    [SerializeField] PathGridHelper gridHelper;
 
-    private PathfinderAStar pathfinder;
+    private PathFinder pathfinder;
 
     void Start()
     {
         unitObject = GetComponent<UnitObject>();
         UpdateUnitTilePosition();
-        pathfinder = new PathfinderAStar(gridManager);
+        pathfinder = new PathFinder(gridManager, gridHelper);
     }
 
     public Vector3Int GetCurrentTile() => unitObject.currentTile;
@@ -32,7 +34,7 @@ public class UnitMovement : MonoBehaviour
     {
         foreach (var tilePos in path)
         {
-            if (gridManager.GetMovementCost(tilePos, GetMovementType(), out int cost))
+            if (gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost))
             if (unitObject.currentActionPoints < cost)
                 yield break;
             Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);

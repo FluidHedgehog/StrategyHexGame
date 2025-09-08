@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class PathfinderVFX : MonoBehaviour
+public class PathVFX : MonoBehaviour
 {
     [SerializeField] Tilemap hoverMap;
     [SerializeField] Tilemap stepMap;

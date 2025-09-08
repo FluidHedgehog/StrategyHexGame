@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class PathfinderHelper
+public static class PathHelper
 {
-    public static int ComputePathCost(PathfinderInitializer grid, List<Vector3Int> path, Unit.MovementType moveType)
+    public static int ComputePathCost(PathGridHelper grid, List<Vector3Int> path, Unit.MovementType moveType)
     {
         if (path == null || path.Count < 2) return 0;
         int cost = 0;
@@ -16,7 +16,7 @@ public static class PathfinderHelper
         return cost;
     }
 
-    public static List<Vector3Int> TrimPathToBudget(PathfinderInitializer grid, List<Vector3Int> path, Unit.MovementType moveType, int budget)
+    public static List<Vector3Int> TrimPathToBudget(PathGridHelper grid, List<Vector3Int> path, Unit.MovementType moveType, int budget)
     {
         if (path == null || path.Count == 0) return path;
 
@@ -33,45 +33,6 @@ public static class PathfinderHelper
         return trimmedPath;
     }
 
-    public static bool DoesTileHaveUnit(PathfinderInitializer grid, Vector3Int position)
-    {
-        return grid.unitPositions.ContainsKey(position);
-    }
-
-    public static List<Vector3Int> GetReachableTiles(PathfinderInitializer grid, Vector3Int start, Unit.MovementType moveType, int maxCost)
-    {
-        var reachable = new List<Vector3Int>();
-        var frontier = new Queue<Vector3Int>();
-        var costSoFar = new Dictionary<Vector3Int, int>();
-
-        frontier.Enqueue(start);
-        costSoFar[start] = 0;
-
-        while (frontier.Count > 0)
-        {
-            var current = frontier.Dequeue();
-
-            foreach (var neighbor in GetNeighbors(current))
-            {
-                if (!grid.GetMovementCost(neighbor, moveType, out int moveCost))
-                    continue;
-
-                if (DoesTileHaveUnit(grid, neighbor))
-                    continue;
-
-                int newCost = costSoFar[current] + moveCost;
-                if (newCost <= maxCost && (!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor]))
-                {
-                    costSoFar[neighbor] = newCost;
-                    frontier.Enqueue(neighbor);
-                    reachable.Add(neighbor);
-                }
-            }
-        }
-
-        return reachable;
-    }
-
     public static int GetHexDistance(Vector3Int start, Vector3Int goal)
     {
         int dx = goal.x - start.x;
@@ -81,7 +42,7 @@ public static class PathfinderHelper
         return (Mathf.Abs(dx) + Mathf.Abs(dy) + Mathf.Abs(dz)) / 2;
     }
 
-    public static int CalculateMovementCost(PathfinderInitializer grid, Vector3Int from, Vector3Int to, Unit.MovementType moveType)
+    public static int CalculateMovementCost(PathGridHelper grid, Vector3Int from, Vector3Int to, Unit.MovementType moveType)
     {
         if (!grid.GetMovementCost(to, moveType, out int moveCost))
             return int.MaxValue; // Impassable

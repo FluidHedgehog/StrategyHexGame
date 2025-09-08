@@ -1,15 +1,17 @@
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using Utils;
 
-public class PathfinderAStar
+public class PathFinder
 {
-    private PathfinderInitializer grid;
+    // Plain C# service. Dependencies are injected via constructor.
+    private readonly GridManager grid;
+    private readonly PathGridHelper pathGridHelper;
 
-    public PathfinderAStar(PathfinderInitializer gridManager)
+    public PathFinder(GridManager gridManager, PathGridHelper pathGridHelper)
     {
-        grid = gridManager;
+        this.grid = gridManager;
+        this.pathGridHelper = pathGridHelper;
     }
 
     public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, Unit.MovementType movementType)
@@ -17,7 +19,7 @@ public class PathfinderAStar
         var startNode = new PathNode(start) //Initializing start position
         {
             gCost = 0,
-            hCost = PathfinderHelper.GetHexDistance(start, goal) //Get distance from start to goal in hex (smallest possible value)
+            hCost = PathHelper.GetHexDistance(start, goal) //Get distance from start to goal in hex (smallest possible value)
         };
 
         var openSet = new PriorityQueue<PathNode, int>(); //Nodes to be evaluated
@@ -32,27 +34,19 @@ public class PathfinderAStar
         {
             PathNode currentNode = openSet.Dequeue(); //Assign first node as current
             openSetDict.Remove(currentNode.GridPosition);
-            /*foreach (var node in openSet) //Check each node
-            {
-                if (node.fCost < currentNode.fCost || (node.fCost == currentNode.fCost && node.hCost < currentNode.hCost)) //Search for lower value
-                {
-                    currentNode = node; //Assign better cost node
-                }
-            }*/
 
             if (currentNode.GridPosition == goal) //Check if the node reached goal
             {
                 return ReconstructPath(currentNode); //Terminate loop and reconstruct path
             }
 
-            //openSet.Dequeue(currentNode, currentNode.fCost); //Removed for performance reasons
             closedSet.Add(currentNode.GridPosition); //Add to closed set
 
-            foreach (var neighborPos in PathfinderHelper.GetNeighbors(currentNode.GridPosition)) //Get all neighboring nodes 
+            foreach (var neighborPos in PathHelper.GetNeighbors(currentNode.GridPosition)) //Get all neighboring nodes 
             {
                 if (closedSet.Contains(neighborPos)) continue; //Skip if already evaluated
 
-                if (!grid.GetMovementCost(neighborPos, movementType, out int cost)) continue; //Skip if no valid movement cost
+                if (!pathGridHelper.GetMovementCost(neighborPos, movementType, out int cost)) continue; //Skip if no valid movement cost
 
                 int tentativeGCost = currentNode.gCost + cost; //Calculate gCost
 
@@ -70,7 +64,7 @@ public class PathfinderAStar
                 {
                     neighbor = new PathNode(neighborPos); //Create a new node
                     neighbor.gCost = tentativeGCost; //Set gCost
-                    neighbor.hCost = PathfinderHelper.GetHexDistance(neighborPos, goal); //Set hCost
+                    neighbor.hCost = PathHelper.GetHexDistance(neighborPos, goal); //Set hCost
                     neighbor.Parent = currentNode; //Set parent
 
                     openSet.Enqueue(neighbor, neighbor.fCost); //Add to open set
@@ -96,7 +90,38 @@ public class PathfinderAStar
 
         return path; //Return the final path
     }
-}
 
-// To implement obstacles, we can modify the GetNeighbors method to skip over tiles that are not walkable.
-// This can be done by checking the tile's properties in the PathfinderInitializer class. I need to put this fun
+    public List<Vector3Int> GetReachableTiles(GridManager grid, UnitManager unitManager, Vector3Int start, Unit.MovementType moveType, int maxCost)
+    {
+        var reachable = new List<Vector3Int>();
+        var frontier = new Queue<Vector3Int>();
+        var costSoFar = new Dictionary<Vector3Int, int>();
+
+        frontier.Enqueue(start);
+        costSoFar[start] = 0;
+
+        while (frontier.Count > 0)
+        {
+            var current = frontier.Dequeue();
+
+            foreach (var neighbor in PathHelper.GetNeighbors(current))
+            {
+                if (!pathGridHelper.GetMovementCost(neighbor, moveType, out int moveCost))
+                    continue;
+
+                if (PathUnitHelper.DoesTileHaveUnit(unitManager, neighbor))
+                    continue;
+
+                int newCost = costSoFar[current] + moveCost;
+                if (newCost <= maxCost && (!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor]))
+                {
+                    costSoFar[neighbor] = newCost;
+                    frontier.Enqueue(neighbor);
+                    reachable.Add(neighbor);
+                }
+            }
+        }
+
+        return reachable;
+    }
+}
