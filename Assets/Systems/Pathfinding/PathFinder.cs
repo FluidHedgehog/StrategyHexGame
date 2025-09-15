@@ -14,7 +14,7 @@ public class PathFinder
         this.pathGridHelper = pathGridHelper;
     }
 
-    public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, Unit.MovementType movementType)
+    public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, MovementType movementType)
     {
         var startNode = new PathNode(start) //Initializing start position
         {
@@ -91,7 +91,7 @@ public class PathFinder
         return path; //Return the final path
     }
 
-    public List<Vector3Int> GetReachableTiles(GridManager grid, UnitManager unitManager, Vector3Int start, Unit.MovementType moveType, int maxCost)
+    public List<Vector3Int> GetReachableTiles(GridManager grid, UnitManager unitManager, Vector3Int start, MovementType moveType, int maxCost)
     {
         var reachable = new List<Vector3Int>();
         var frontier = new Queue<Vector3Int>();

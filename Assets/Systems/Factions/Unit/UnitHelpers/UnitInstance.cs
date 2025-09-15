@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class UnitObject : MonoBehaviour
+public class UnitInstance : MonoBehaviour
+
 {
-    public Unit unitData;
+    public UnitData unitData;
 
     public int level;
     public int currentHealthPoints;
@@ -20,10 +21,10 @@ public class UnitObject : MonoBehaviour
     {
         isAlive = true;
         isSelected = false;
-        currentHealthPoints = unitData.healthPoints;
+        currentHealthPoints = unitData.maxHealth;
         currentExperiencePoints = 0;
         currentActionPoints = unitData.maxActionPoints;
-        luckPoints = unitData.baseLuckPoints;
+        luckPoints = unitData.luck;
     }
 
     public void TakeDamage(int amount)
@@ -57,7 +58,7 @@ public class UnitObject : MonoBehaviour
     public void GainExperience(int amount)
     {
         currentExperiencePoints += amount;
-        if (currentExperiencePoints >= unitData.maxExperiencePoints)
+        if (currentExperiencePoints >= unitData.maxExperience)
         {
             LevelUp();
         }
@@ -73,7 +74,7 @@ public class UnitObject : MonoBehaviour
     {
         level++;
         currentExperiencePoints = 0;
-        currentHealthPoints = unitData.healthPoints;
+        currentHealthPoints = unitData.maxHealth;
         currentActionPoints = unitData.maxActionPoints;
         // Additional logic for leveling up (e.g., increase stats, unlock abilities, etc.)
         OnStatsChanged?.Invoke();
@@ -82,3 +83,4 @@ public class UnitObject : MonoBehaviour
     public event System.Action OnStatsChanged;
 
 }
+

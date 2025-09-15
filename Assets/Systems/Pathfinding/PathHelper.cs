@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class PathHelper
 {
-    public static int ComputePathCost(PathGridHelper grid, List<Vector3Int> path, Unit.MovementType moveType)
+    public static int ComputePathCost(PathGridHelper grid, List<Vector3Int> path, MovementType moveType)
     {
         if (path == null || path.Count < 2) return 0;
         int cost = 0;
@@ -16,7 +16,7 @@ public static class PathHelper
         return cost;
     }
 
-    public static List<Vector3Int> TrimPathToBudget(PathGridHelper grid, List<Vector3Int> path, Unit.MovementType moveType, int budget)
+    public static List<Vector3Int> TrimPathToBudget(PathGridHelper grid, List<Vector3Int> path, MovementType moveType, int budget)
     {
         if (path == null || path.Count == 0) return path;
 
@@ -42,7 +42,7 @@ public static class PathHelper
         return (Mathf.Abs(dx) + Mathf.Abs(dy) + Mathf.Abs(dz)) / 2;
     }
 
-    public static int CalculateMovementCost(PathGridHelper grid, Vector3Int from, Vector3Int to, Unit.MovementType moveType)
+    public static int CalculateMovementCost(PathGridHelper grid, Vector3Int from, Vector3Int to, MovementType moveType)
     {
         if (!grid.GetMovementCost(to, moveType, out int moveCost))
             return int.MaxValue; // Impassable

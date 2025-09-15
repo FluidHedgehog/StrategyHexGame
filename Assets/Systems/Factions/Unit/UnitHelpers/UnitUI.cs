@@ -5,35 +5,35 @@ using UnityEngine.UI;
 
 public class UnitUI : MonoBehaviour
 {
-    [SerializeField] private Unit unit;
-    [SerializeField] private UnitObject unitObject;
+    [SerializeField] private UnitData unit;
+    [SerializeField] private UnitInstance unitInstance;
     [SerializeField] private Slider healthBar;
     [SerializeField] private Slider expBar;
     [SerializeField] private Slider actionPointsBar;
 
     private void Awake()
     {
-        healthBar.maxValue = unit.healthPoints;
-        expBar.maxValue = unit.maxExperiencePoints;
+        healthBar.maxValue = unit.maxHealth;
+        expBar.maxValue = unit.maxExperience;
         actionPointsBar.maxValue = unit.maxActionPoints;
     }
     private void Start()
     {
-        unitObject.OnStatsChanged += UpdateUI;
+        unitInstance.OnStatsChanged += UpdateUI;
 
         UpdateUI();
     }
 
     private void OnDestroy()
     {
-        unitObject.OnStatsChanged -= UpdateUI;
+        unitInstance.OnStatsChanged -= UpdateUI;
     }
 
     private void UpdateUI()
     {
-        healthBar.value = unitObject.currentHealthPoints;
-        expBar.value = unitObject.currentExperiencePoints;
-        actionPointsBar.value = unitObject.currentActionPoints;
+        healthBar.value = unitInstance.currentHealthPoints;
+        expBar.value = unitInstance.currentExperiencePoints;
+        actionPointsBar.value = unitInstance.currentActionPoints;
     }
 
 }

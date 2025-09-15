@@ -47,7 +47,7 @@ public class PathGridHelper : MonoBehaviour
         return tileData != null && tileData.walkable;
     }
 
-    public bool GetMovementCost(Vector3Int gridPosition, Unit.MovementType movementType, out int cost)
+    public bool GetMovementCost(Vector3Int gridPosition, MovementType movementType, out int cost)
     {
         // If UnitManager is missing, we cannot check occupancy; treat as empty
         if (unitManager != null && PathUnitHelper.DoesTileHaveUnit(unitManager, gridPosition))
@@ -64,13 +64,13 @@ public class PathGridHelper : MonoBehaviour
 
         switch (movementType)
         {
-            case Unit.MovementType.Walk:
+            case MovementType.Walk:
                 cost = tileData.walkCost;
                 return tileData.walkable;
-            case Unit.MovementType.Swim:
+            case MovementType.Swim:
                 cost = tileData.swimCost;
                 return tileData.swimable;
-            case Unit.MovementType.Fly:
+            case MovementType.Fly:
                 cost = tileData.flyCost;
                 return tileData.flyable;
             default:

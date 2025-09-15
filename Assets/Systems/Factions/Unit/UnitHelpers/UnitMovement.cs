@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 public class UnitMovement : MonoBehaviour
 {
     public Tilemap tilemap;
-    public UnitObject unitObject;
+    public UnitInstance unitInstance;
 
     [SerializeField] InputManager inputManager;
     [SerializeField] GridManager gridManager;
@@ -17,13 +17,13 @@ public class UnitMovement : MonoBehaviour
 
     void Start()
     {
-        unitObject = GetComponent<UnitObject>();
+        unitInstance = GetComponent<UnitInstance>();
         UpdateUnitTilePosition();
         pathfinder = new PathFinder(gridManager, gridHelper);
     }
 
-    public Vector3Int GetCurrentTile() => unitObject.currentTile;
-    public Unit.MovementType GetMovementType() => unitObject.unitData.movementType;
+    public Vector3Int GetCurrentTile() => unitInstance.currentTile;
+    public MovementType GetMovementType() => (MovementType)unitInstance.unitData.movementType;
 
     public void MoveAlongPath(List<Vector3Int> path)
     {
@@ -35,7 +35,7 @@ public class UnitMovement : MonoBehaviour
         foreach (var tilePos in path)
         {
             if (gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost))
-            if (unitObject.currentActionPoints < cost)
+            if (unitInstance.currentActionPoints < cost)
                 yield break;
             Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
 
@@ -45,14 +45,14 @@ public class UnitMovement : MonoBehaviour
                 yield return null;
             }
 
-            unitObject.currentTile = tilePos;
-            unitObject.currentActionPoints -= cost;
+            unitInstance.currentTile = tilePos;
+            unitInstance.currentActionPoints -= cost;
         }
     }
 
     public void MoveTo(Vector3Int targetPosition)
     {
-        var path = pathfinder.FindPath(unitObject.currentTile, targetPosition, unitObject.unitData.movementType);
+        var path = pathfinder.FindPath(unitInstance.currentTile, targetPosition, (MovementType)unitInstance.unitData.movementType);
         if (path != null)
         {
             StartCoroutine(FollowPath(path));
@@ -63,7 +63,7 @@ public class UnitMovement : MonoBehaviour
     {
         if (tilemap != null)
         {
-            unitObject.currentTile = tilemap.WorldToCell(transform.position);
+            unitInstance.currentTile = tilemap.WorldToCell(transform.position);
         }
     }
 }

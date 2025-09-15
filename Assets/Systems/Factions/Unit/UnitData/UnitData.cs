@@ -18,6 +18,7 @@ public class UnitData : ScriptableObject
     public int skill;      // Damage/Healing modifier
     public int agility;    // Dodge chance
     public int armor;      // Damage neglected 
+    public int luck;       // Additional functionality
 
     [Header("Movement")]
     public MovementType movementType; 

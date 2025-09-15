@@ -55,7 +55,7 @@ public class PathController : MonoBehaviour
 
     public List<Vector3Int> DetectReachableTiles(UnitMovement unit)
     {
-        if (pathFinder == null || gridManager == null || unitManager == null || unit == null || unit.unitObject == null)
+        if (pathFinder == null || gridManager == null || unitManager == null || unit == null || unit.unitInstance == null)
         {
             Debug.LogError("DetectReachableTiles missing dependency or unit/unitObject");
             return new List<Vector3Int>();
@@ -65,8 +65,8 @@ public class PathController : MonoBehaviour
             gridManager,
             unitManager,
             unit.GetCurrentTile(),
-            unit.GetMovementType(),
-            (int)unit.unitObject.currentActionPoints
+            (MovementType)unit.GetMovementType(),
+            (int)unit.unitInstance.currentActionPoints
         );
         return reachable;
     }
@@ -97,12 +97,12 @@ public class PathController : MonoBehaviour
     {
         if (selectedUnit == null) return;
         var um = selectedUnit.GetComponent<UnitMovement>();
-        if (um == null || um.unitObject == null) return;
+        if (um == null || um.unitInstance == null) return;
 
         var path = DetectPath(targetTile);
         if (path == null || path.Count == 0) return;
 
-        int budget = (int)um.unitObject.currentActionPoints;
+        int budget = (int)um.unitInstance.currentActionPoints;
         var cost = PathHelper.ComputePathCost(gridHelper, path, um.GetMovementType());
 
         if (cost > budget)
