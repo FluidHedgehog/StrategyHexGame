@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ca9acec277c1cc41b0d7f8daeab97c5, type: 3}
+  m_Name: Rogue
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  unitName: Rogue
+  icon: {fileID: 0}
+  prefab: {fileID: 0}
+  maxHealth: 24
+  maxExperience: 30
+  maxActionPoints: 6
+  skill: 1
+  agility: 2
+  armor: 0
+  luck: 1
+  movementType: 0
+  abilities: []
+  advancementOptions:
+  - {fileID: 11400000, guid: c8f2d11079d71354b8cc11f25de3c306, type: 2}

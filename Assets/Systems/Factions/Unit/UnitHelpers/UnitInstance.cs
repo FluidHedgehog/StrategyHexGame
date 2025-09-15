@@ -4,6 +4,7 @@ public class UnitInstance : MonoBehaviour
 
 {
     public UnitData unitData;
+    public Site site;
 
     public int level;
     public int currentHealthPoints;

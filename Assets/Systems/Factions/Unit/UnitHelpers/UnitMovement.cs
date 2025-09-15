@@ -12,6 +12,7 @@ public class UnitMovement : MonoBehaviour
     [SerializeField] InputManager inputManager;
     [SerializeField] GridManager gridManager;
     [SerializeField] PathGridHelper gridHelper;
+    [SerializeField] UnitManager unitManager;
 
     private PathFinder pathfinder;
 
@@ -20,6 +21,7 @@ public class UnitMovement : MonoBehaviour
         unitInstance = GetComponent<UnitInstance>();
         UpdateUnitTilePosition();
         pathfinder = new PathFinder(gridManager, gridHelper);
+        unitManager = FindFirstObjectByType<UnitManager>();
     }
 
     public Vector3Int GetCurrentTile() => unitInstance.currentTile;
@@ -27,16 +29,18 @@ public class UnitMovement : MonoBehaviour
 
     public void MoveAlongPath(List<Vector3Int> path)
     {
-        StartCoroutine(FollowPath(path));
+        StartCoroutine(FollowPath(path));    
     }
 
     private IEnumerator FollowPath(List<Vector3Int> path)
     {
+        Vector3Int startPos = unitInstance.currentTile;
+
         foreach (var tilePos in path)
         {
             if (gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost))
-            if (unitInstance.currentActionPoints < cost)
-                yield break;
+                if (unitInstance.currentActionPoints < cost)
+                    yield break;
             Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
 
             while ((Vector3.Distance(transform.position, worldPos)) > 0.01f)
@@ -48,6 +52,7 @@ public class UnitMovement : MonoBehaviour
             unitInstance.currentTile = tilePos;
             unitInstance.currentActionPoints -= cost;
         }
+        unitManager.UpdateUnitPositions(gameObject, startPos, unitInstance.currentTile);
     }
 
     public void MoveTo(Vector3Int targetPosition)
@@ -56,6 +61,8 @@ public class UnitMovement : MonoBehaviour
         if (path != null)
         {
             StartCoroutine(FollowPath(path));
+
+
         }
     }
 
