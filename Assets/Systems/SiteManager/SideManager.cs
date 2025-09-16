@@ -5,32 +5,23 @@ using UnityEngine;
 public class SideManager : MonoBehaviour
 {
 
+    [SerializeField] TurnManager turnManager;
+
     public List<SideData> sideDatas;
-    private int currentSideIndex = 0;
+    public int currentSideIndex = 0;
 
 
     public SideData currentSide => sideDatas[currentSideIndex];
 
-    private void Update()
+    public void EndTurn()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (currentSideIndex == (sideDatas.Count - 1))
         {
-            Debug.Log("The " + currentSide + " is " + currentSideIndex);
+            currentSideIndex = 0;
+            turnManager.currentTurn++;
         }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
+        currentSideIndex++;
 
-            if (currentSideIndex == (sideDatas.Count - 1))
-            {
-
-                currentSideIndex = 0;
-                Debug.Log("Side changed to " + currentSide);
-                return;
-            }
-            currentSideIndex++;
-            Debug.Log("Side changed to " + currentSide);
-
-        }
+        Debug.Log("Side changed to " + currentSide);
     }
-
 }

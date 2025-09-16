@@ -1,32 +1,40 @@
-using Unity.VisualScripting;
-using UnityEngine;
 
-public enum TurnPhase { StartingPhase, ActionPhase, ClosingPhase }
+using System.Collections.Generic;
+using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-
-    [SerializeField] SideManager sideManager;
     [SerializeField] UnitController unitController;
- 
 
+    public SideData currentSide => sideDatas[currentSideIndex];
+    public List<SideData> sideDatas;
+    public int currentSideIndex = 0;
     public int turnLimit;
     public int currentTurn;
-    public TurnPhase currentPhase;
 
     public void Start()
     {
-        StartPhase();
+        StartTurn();
+        currentTurn = 1;
     }
 
-    void StartPhase()
+    void StartTurn()
     {
-        currentPhase = TurnPhase.StartingPhase;
-        unitController.ActivateSideUnits(sideManager.currentSide.currentUnits);
+        unitController.ActivateSideUnits(currentSide.currentUnits);
     }
 
-
-
-
-
+    public void EndTurn()
+    {
+        unitController.DeactivateSideUnits(currentSide.currentUnits);
+        currentSideIndex++;
+        if (currentSideIndex == sideDatas.Count)
+        {
+            currentSideIndex = 0;
+            currentTurn++;
+        }
+        
+        unitController.ActivateSideUnits(currentSide.currentUnits);
+        Debug.Log("Side changed to " + currentSide);
+    }
 }
+
