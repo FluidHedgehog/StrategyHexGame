@@ -3,30 +3,42 @@ using UnityEngine;
 public class UnitInstance : MonoBehaviour
 
 {
-    public UnitData unitData;
-    public Site site;
+    //------------------------------------------------------------------------------
+    // Critical References
+    //------------------------------------------------------------------------------
 
-    public int level;
+    public UnitData unitData;
+    public Side side;
+    public bool isActive;
+
+    //------------------------------------------------------------------------------
+    // Unit Core Values
+    //------------------------------------------------------------------------------
+
     public int currentHealthPoints;
     public int currentExperiencePoints;
-
     public float currentActionPoints;
     public float luckPoints;
 
-    public bool isSelected;
-    public bool isAlive;
+    //------------------------------------------------------------------------------
+    // Unit currentPosition
+    //------------------------------------------------------------------------------
 
     public Vector3Int currentTile;
 
+    //------------------------------------------------------------------------------
+    // Initialization of unit values
+    //------------------------------------------------------------------------------
+
     void Awake()
     {
-        isAlive = true;
-        isSelected = false;
         currentHealthPoints = unitData.maxHealth;
         currentExperiencePoints = 0;
         currentActionPoints = unitData.maxActionPoints;
         luckPoints = unitData.luck;
     }
+
+
 
     public void TakeDamage(int amount)
     {
@@ -68,12 +80,11 @@ public class UnitInstance : MonoBehaviour
 
     public void Die()
     {
-        isAlive = false;
+
     }
 
     public void LevelUp()
     {
-        level++;
         currentExperiencePoints = 0;
         currentHealthPoints = unitData.maxHealth;
         currentActionPoints = unitData.maxActionPoints;
@@ -81,7 +92,12 @@ public class UnitInstance : MonoBehaviour
         OnStatsChanged?.Invoke();
     }
 
-    public event System.Action OnStatsChanged;
+    public System.Action OnStatsChanged { get; set; }
+
+    public void NotifyStatsChanged() {
+        OnStatsChanged?.Invoke();
+    }
 
 }
+
 

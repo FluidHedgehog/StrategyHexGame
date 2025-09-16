@@ -34,8 +34,9 @@ public class PathController : MonoBehaviour
         if (!unitManager.unitPositions.TryGetValue(position, out var unit) || unit == null) return null;
 
         var um = unit.GetComponent<UnitMovement>();
+        var ui = unit.GetComponent<UnitInstance>();
         if (um == null) { Debug.LogWarning("Clicked unit has no UnitMovement component"); return null; }
-
+        if (!ui.isActive) return null;
         selectedUnit = unit;
 
         var reachable = DetectReachableTiles(um);

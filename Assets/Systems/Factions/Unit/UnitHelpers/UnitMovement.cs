@@ -38,11 +38,10 @@ public class UnitMovement : MonoBehaviour
 
         foreach (var tilePos in path)
         {
-            if (gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost))
-                if (unitInstance.currentActionPoints < cost)
-                    yield break;
-            Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
+            gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost);
+            unitInstance.currentActionPoints -= cost;
 
+            Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
             while ((Vector3.Distance(transform.position, worldPos)) > 0.01f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, worldPos, Time.deltaTime * 5f);
@@ -50,7 +49,7 @@ public class UnitMovement : MonoBehaviour
             }
 
             unitInstance.currentTile = tilePos;
-            unitInstance.currentActionPoints -= cost;
+            unitInstance.NotifyStatsChanged();
         }
         unitManager.UpdateUnitPositions(gameObject, startPos, unitInstance.currentTile);
     }

@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum Site { Player, Enemy1, Enemy2, Enemy3, Enemy4, Enemy5, Enemy6, Enemy7, Enemy8 }
+public enum Side { Player, Enemy1, Enemy2, Enemy3, Enemy4, Enemy5, Enemy6, Enemy7, Enemy8 }
 public enum InputFrom { Player, AI }
 
-public class SiteData : MonoBehaviour
+public class SideData : MonoBehaviour
 {
     public InputFrom inputFrom;
 
     public FactionData factionData;
 
-    public Site site;
+    public Side side;
 
     public List<UnitInstance> currentUnits;
 
@@ -24,12 +24,13 @@ public class SiteData : MonoBehaviour
         {
 
             UnitInstance unitInstance = unit.GetComponent<UnitInstance>();
-            if (unitInstance.site == site)
+            if (unitInstance.side == side)
             {
                 currentUnits.Add(unitInstance);
-                Debug.Log("Added unit: " + unit + " to site " + site);
+                Debug.Log("Added unit: " + unit + " to site " + side);
             }
 
         }
     }
 }
+
