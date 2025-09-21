@@ -1,11 +1,12 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathUnitHelper : MonoBehaviour
 {
+    [SerializeField] UnitManager unitManager;
 
-    public static bool DoesTileHaveUnit(UnitManager grid, Vector3Int position)
+    public bool DoesTileHaveUnit(Vector3Int position)
     {
-        return grid.unitPositions.ContainsKey(position);
+        return unitManager.unitPositions.ContainsKey(position);
     }
-
 }

@@ -29,7 +29,7 @@ public class UnitUI : MonoBehaviour
         unitInstance.OnStatsChanged -= UpdateUI;
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         healthBar.value = unitInstance.currentHealthPoints;
         expBar.value = unitInstance.currentExperiencePoints;

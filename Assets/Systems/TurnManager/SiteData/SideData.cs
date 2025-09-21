@@ -14,12 +14,18 @@ public class SideData : MonoBehaviour
 
     public List<UnitInstance> currentUnits;
 
+    public List<SideData> friendlySides;
+
+    public List<SideData> neutralSides;
+
+    public List<SideData> hostileSides;
 
     [Header("References")]
     [SerializeField] UnitManager unitManager;
 
     private void Start()
     {
+        unitManager = FindFirstObjectByType<UnitManager>();
         foreach (var unit in unitManager.unitsInGame)
         {
 

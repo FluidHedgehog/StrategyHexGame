@@ -13,6 +13,7 @@ public class BattleIdleState : IBattleMapState
 
     public void Enter()
     {
+        Debug.Log("EnteredIdleState");
         taskManager.OnGridPositionChanged.AddListener(taskManager.HandleGridChangeIdle);
         taskManager.Interact.AddListener(taskManager.HandleInteractIdle);
         taskManager.Cancel.AddListener(taskManager.HandleCancel);
@@ -23,12 +24,13 @@ public class BattleIdleState : IBattleMapState
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            stateMachine.ChangeState(new BattleActionState(stateMachine, taskManager));
+            stateMachine.ChangeState(stateMachine.actionState);
         }
     }
 
     public void Exit()
     {
+        Debug.Log("ExitIdleState");
         taskManager.OnGridPositionChanged.RemoveListener(taskManager.HandleGridChangeIdle);
         taskManager.Interact.RemoveListener(taskManager.HandleInteractIdle);
         taskManager.Cancel.RemoveListener(taskManager.HandleCancel);

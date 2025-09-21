@@ -20,16 +20,17 @@ public class UnitMovement : MonoBehaviour
     {
         unitInstance = GetComponent<UnitInstance>();
         UpdateUnitTilePosition();
-        pathfinder = new PathFinder(gridManager, gridHelper);
+        //pathfinder = new PathFinder(gridManager, gridHelper);
         unitManager = FindFirstObjectByType<UnitManager>();
     }
 
     public Vector3Int GetCurrentTile() => unitInstance.currentTile;
     public MovementType GetMovementType() => (MovementType)unitInstance.unitData.movementType;
+    public int GetActionPoints() => unitInstance.currentActionPoints;
 
     public void MoveAlongPath(List<Vector3Int> path)
     {
-        StartCoroutine(FollowPath(path));    
+        StartCoroutine(FollowPath(path));
     }
 
     private IEnumerator FollowPath(List<Vector3Int> path)
@@ -39,6 +40,7 @@ public class UnitMovement : MonoBehaviour
         foreach (var tilePos in path)
         {
             gridHelper.GetMovementCost(tilePos, GetMovementType(), out int cost);
+
             unitInstance.currentActionPoints -= cost;
 
             Vector3 worldPos = tilemap.GetCellCenterWorld(tilePos);
@@ -52,6 +54,11 @@ public class UnitMovement : MonoBehaviour
             unitInstance.NotifyStatsChanged();
         }
         unitManager.UpdateUnitPositions(gameObject, startPos, unitInstance.currentTile);
+
+        if (unitInstance.currentActionPoints <= 0)
+        {
+            unitInstance.isActive = false;
+        }
     }
 
     public void MoveTo(Vector3Int targetPosition)

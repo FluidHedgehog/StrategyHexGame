@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class UnitManager : MonoBehaviour
 {
+    public GameObject previouslySelectedUnit;
+    public GameObject selectedUnit;
 
     [SerializeField] public Tilemap map;
 
@@ -41,5 +43,10 @@ public class UnitManager : MonoBehaviour
 
         unitPositions[newPos] = unit;
     }
-    
+
+    public void UpdateUnitUI(GameObject unit)
+    {
+        var ui = unit.GetComponent<UnitUI>();
+        ui.UpdateUI();
+    }
 }

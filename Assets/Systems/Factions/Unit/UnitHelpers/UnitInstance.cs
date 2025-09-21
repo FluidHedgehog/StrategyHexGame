@@ -17,7 +17,7 @@ public class UnitInstance : MonoBehaviour
 
     public int currentHealthPoints;
     public int currentExperiencePoints;
-    public float currentActionPoints;
+    public int currentActionPoints;
     public float luckPoints;
 
     //------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ public class UnitInstance : MonoBehaviour
         OnStatsChanged?.Invoke();
     }
 
-    public void ToMove(float amount)
+    public void ToMove(int amount)
     {
         if (currentActionPoints >= amount)
         {
@@ -59,7 +59,7 @@ public class UnitInstance : MonoBehaviour
         }
     }
 
-    public void ToAttack(float amount)
+    public void ToAttack(int amount)
     {
         if (currentActionPoints >= amount)
         {

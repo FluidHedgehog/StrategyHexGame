@@ -17,22 +17,6 @@ public class PathGridHelper : MonoBehaviour
 
     public TileData GetTileData(Vector3Int gridPosition)
     {
-        if (grid == null)
-        {
-            Debug.LogError("PathGridHelper: GridManager reference is missing");
-            return null;
-        }
-        if (grid.tilemap == null)
-        {
-            Debug.LogError("PathGridHelper: GridManager.tilemap is missing");
-            return null;
-        }
-        if (grid.dataFromTerrain == null)
-        {
-            Debug.LogError("PathGridHelper: GridManager.dataFromTerrain is missing");
-            return null;
-        }
-
         var tile = grid.tilemap.GetTile(gridPosition);
         if (tile != null && grid.dataFromTerrain.ContainsKey(tile))
         {
@@ -49,12 +33,6 @@ public class PathGridHelper : MonoBehaviour
 
     public bool GetMovementCost(Vector3Int gridPosition, MovementType movementType, out int cost)
     {
-        // If UnitManager is missing, we cannot check occupancy; treat as empty
-        if (unitManager != null && PathUnitHelper.DoesTileHaveUnit(unitManager, gridPosition))
-        {
-            cost = int.MaxValue;
-            return false;
-        }
         var tileData = GetTileData(gridPosition);
         if (tileData == null)
         {

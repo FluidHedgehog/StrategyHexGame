@@ -14,6 +14,8 @@ public class TurnManager : MonoBehaviour
 
     public void Start()
     {
+        unitController = FindFirstObjectByType<UnitController>();
+
         StartTurn();
         currentTurn = 1;
     }

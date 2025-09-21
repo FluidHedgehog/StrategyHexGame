@@ -1,17 +1,23 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Mono.Cecil.Cil;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Utils;
 
 public class PathFinder
 {
     // Plain C# service. Dependencies are injected via constructor.
-    private readonly GridManager grid;
+    //private readonly GridManager grid;
     private readonly PathGridHelper pathGridHelper;
+    private readonly PathUnitHelper pathUnitHelper;
 
-    public PathFinder(GridManager gridManager, PathGridHelper pathGridHelper)
+    public PathFinder(GridManager gridManager, PathGridHelper pathGridHelper, PathUnitHelper pathUnitHelper)
     {
-        this.grid = gridManager;
+        //this.grid = gridManager;
         this.pathGridHelper = pathGridHelper;
+        this.pathUnitHelper = pathUnitHelper;
     }
 
     public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal, MovementType movementType)
@@ -91,33 +97,49 @@ public class PathFinder
         return path; //Return the final path
     }
 
-    public List<Vector3Int> GetReachableTiles(GridManager grid, UnitManager unitManager, Vector3Int start, MovementType moveType, int maxCost)
+
+
+
+
+
+
+
+    public List<Vector3Int> GetReachable(UnitMovement unit)
     {
         var reachable = new List<Vector3Int>();
         var frontier = new Queue<Vector3Int>();
         var costSoFar = new Dictionary<Vector3Int, int>();
 
+        var start = unit.GetCurrentTile();
+        var moveType = unit.GetMovementType();
+        var maxCost = unit.GetActionPoints();
+
+
+
         frontier.Enqueue(start);
         costSoFar[start] = 0;
+
+
+
+
+
 
         while (frontier.Count > 0)
         {
             var current = frontier.Dequeue();
 
-            foreach (var neighbor in PathHelper.GetNeighbors(current))
+            foreach (var tile in PathHelper.GetNeighbors(current))
             {
-                if (!pathGridHelper.GetMovementCost(neighbor, moveType, out int moveCost))
-                    continue;
-
-                if (PathUnitHelper.DoesTileHaveUnit(unitManager, neighbor))
-                    continue;
+                if (pathUnitHelper.DoesTileHaveUnit(tile)) continue;
+                if (!pathGridHelper.GetMovementCost(tile, moveType, out int moveCost)) continue;
 
                 int newCost = costSoFar[current] + moveCost;
-                if (newCost <= maxCost && (!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor]))
+
+                if (newCost <= maxCost && (!costSoFar.ContainsKey(tile) || newCost < costSoFar[tile]))
                 {
-                    costSoFar[neighbor] = newCost;
-                    frontier.Enqueue(neighbor);
-                    reachable.Add(neighbor);
+                    costSoFar[tile] = newCost;
+                    frontier.Enqueue(tile);
+                    reachable.Add(tile);
                 }
             }
         }

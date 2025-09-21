@@ -8163,9 +8163,6 @@ MonoBehaviour:
   factionData: {fileID: 11400000, guid: a5ecccf5c1825954b89aab1b7239e274, type: 2}
   side: 2
   currentUnits: []
-  friendlySides: []
-  neutralSides: []
-  hostileSides: []
   unitManager: {fileID: 799799904}
 --- !u!1 &445477017
 GameObject:
@@ -8618,8 +8615,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c7603f4339a82742980a6804f0e7719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitManager
-  previouslySelectedUnit: {fileID: 0}
-  selectedUnit: {fileID: 0}
   map: {fileID: 251286360}
   unitsInGame: []
 --- !u!4 &799799905
@@ -8685,9 +8680,6 @@ MonoBehaviour:
   factionData: {fileID: 11400000, guid: 5a702c6351f97db4ca71e4db070be47e, type: 2}
   side: 0
   currentUnits: []
-  friendlySides: []
-  neutralSides: []
-  hostileSides: []
   unitManager: {fileID: 799799904}
 --- !u!1 &833653366
 GameObject:
@@ -8886,10 +8878,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TaskManager
   inputManager: {fileID: 1034636521}
-  turnManager: {fileID: 445477019}
-  unitManager: {fileID: 0}
   pathController: {fileID: 1374665860}
   stateMachine: {fileID: 483615469}
+  turnManager: {fileID: 445477019}
 --- !u!4 &1164208238
 Transform:
   m_ObjectHideFlags: 0
@@ -9077,6 +9068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01707fc24c92901459d05d8eeeebb451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathController
+  selectedUnit: {fileID: 0}
   gridManager: {fileID: 1325147709}
   gridHelper: {fileID: 1374665857}
   unitHelper: {fileID: 1374665856}
@@ -9130,9 +9122,6 @@ MonoBehaviour:
   factionData: {fileID: 11400000, guid: 12c99942183ed2945a9c36b96ae0dd9b, type: 2}
   side: 1
   currentUnits: []
-  friendlySides: []
-  neutralSides: []
-  hostileSides: []
   unitManager: {fileID: 799799904}
 --- !u!1 &1611748094
 GameObject:

@@ -10,11 +10,22 @@ public class TaskManager : MonoBehaviour
     //------------------------------------------------------------------------------
     [SerializeField] InputManager inputManager;
 
+    [SerializeField] TurnManager turnManager;
+
+    [SerializeField] UnitManager unitManager;
+
     [SerializeField] PathController pathController;
     
     [SerializeField] BattleMapStateMachine stateMachine;
 
-    [SerializeField] TurnManager turnManager;
+    void Start()
+    {
+        inputManager = FindFirstObjectByType<InputManager>();
+        turnManager = FindFirstObjectByType<TurnManager>();
+        unitManager = FindFirstObjectByType<UnitManager>();
+        pathController = FindFirstObjectByType<PathController>();
+        stateMachine = FindFirstObjectByType<BattleMapStateMachine>();
+    }
 
     List<Vector3Int> validatedPath;
 
@@ -33,13 +44,14 @@ public class TaskManager : MonoBehaviour
 
     public void HandleCancel()
     {
-        pathController.selectedUnit = null;
+        unitManager.selectedUnit = null;
+        pathController.ClearTiles();
+        stateMachine.ChangeState(stateMachine.idleState);
     }
 
     public void HandleEndturn()
     {
         turnManager.EndTurn();
-
     }
 
     //------------------------------------------------------------------------------
@@ -48,7 +60,6 @@ public class TaskManager : MonoBehaviour
 
     public void HandleGridChangeIdle(Vector3Int mousePos)
     {
-
     }
 
     public void HandleInteractIdle(Vector3Int clickPos)
@@ -79,8 +90,9 @@ public class TaskManager : MonoBehaviour
 
     public void HandleInteractAction(Vector3Int clickPos)
     {
-        pathController.MoveUnit(clickPos, validatedPath);
-        stateMachine.ChangeState(new BattleIdleState(stateMachine, this));
+        pathController.MoveUnit(validatedPath);
+        unitManager.UpdateUnitUI(unitManager.previouslySelectedUnit);
+        stateMachine.ChangeState(stateMachine.idleState);
     }
 
 }

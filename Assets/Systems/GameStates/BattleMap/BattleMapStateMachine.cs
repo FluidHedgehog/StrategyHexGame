@@ -2,12 +2,22 @@ using UnityEngine;
 
 public class BattleMapStateMachine : MonoBehaviour
 {
-    [SerializeField] IBattleMapState currentState;
     [SerializeField] TaskManager taskManager;
+
+    private IBattleMapState currentState;
+
+    public BattleIdleState idleState;
+    public BattleActionState actionState;
 
     void Start()
     {
-        ChangeState(new BattleIdleState(this, taskManager));
+        taskManager = FindFirstObjectByType<TaskManager>();
+
+
+        idleState = new BattleIdleState(this, taskManager);
+        actionState = new BattleActionState(this, taskManager);
+
+        ChangeState(idleState);
     }
 
     public void ChangeState(IBattleMapState newState)

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Globalization;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,14 +10,13 @@ public class PathController : MonoBehaviour
     // Unit used for pathfinding
     //------------------------------------------------------------------------------ 
 
-    public GameObject selectedUnit;
-
     //------------------------------------------------------------------------------
     // Core references
     //------------------------------------------------------------------------------    
     
     [SerializeField] private GridManager gridManager;
     [SerializeField] private PathGridHelper gridHelper;
+    [SerializeField] private PathUnitHelper unitHelper;
     [SerializeField] private UnitManager unitManager;
     [SerializeField] private PathVFX pathVFX;
     [SerializeField] private PathFinder pathFinder;
@@ -31,7 +32,7 @@ public class PathController : MonoBehaviour
         if (unitManager == null) unitManager = FindFirstObjectByType<UnitManager>();
         if (pathVFX == null) pathVFX = FindFirstObjectByType<PathVFX>();
 
-        pathFinder = new PathFinder(gridManager, gridHelper);
+        pathFinder = new PathFinder(gridManager, gridHelper, unitHelper);
     }
 
     //------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ public class PathController : MonoBehaviour
     {
         var ui = unit.GetComponent<UnitInstance>();
         if (!ui.isActive) return null;
-        selectedUnit = unit;
+        unitManager.selectedUnit = unit;
         return unit;
     }
 
@@ -62,13 +63,7 @@ public class PathController : MonoBehaviour
 
     public List<Vector3Int> DetectReachableTiles(UnitMovement unit)
     {
-        var reachable = pathFinder.GetReachableTiles(
-            gridManager,
-            unitManager,
-            unit.GetCurrentTile(),
-            (MovementType)unit.GetMovementType(),
-            (int)unit.unitInstance.currentActionPoints
-        );
+        var reachable = pathFinder.GetReachable(unit);
         return reachable;
     }
 
@@ -90,7 +85,7 @@ public class PathController : MonoBehaviour
 
     public List<Vector3Int> DetectPath(Vector3Int targetTile)
     {
-        var um = selectedUnit.GetComponent<UnitMovement>();
+        var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
 
         var path = pathFinder.FindPath(
             um.GetCurrentTile(), targetTile,
@@ -105,16 +100,19 @@ public class PathController : MonoBehaviour
             path.Remove(targetTile);
             return path;
         }
-        
 
         if (!path.Contains(targetTile))
         {
-            var um = selectedUnit.GetComponent<UnitMovement>();
+            var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
             int budget = (int)um.unitInstance.currentActionPoints;
             int cost = PathHelper.ComputePathCost(gridHelper, path, um.GetMovementType());
             if (cost > budget)
             {
                 path = PathHelper.TrimPathToBudget(gridHelper, path, um.GetMovementType(), budget);
+            }
+            if (budget <= 0)
+            {
+                return null;
             }
 
         }
@@ -127,21 +125,34 @@ public class PathController : MonoBehaviour
         pathVFX.HighlightPath(path);
     }
 
+
+    public void ClearTiles()
+    {
+        pathVFX.ClearPath();
+        pathVFX.ClearHighlights();
+    }
     //------------------------------------------------------------------------------
     // Unit Movement
     //------------------------------------------------------------------------------
 
-    public void MoveUnit(Vector3Int targetTile, List<Vector3Int> path)
+    public void MoveUnit(List<Vector3Int> path)
     {
-        var um = selectedUnit.GetComponent<UnitMovement>();
+        if (path == null || path.Count < 2) return;
+
+        var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
+
+        int cost = PathHelper.ComputePathCost(gridHelper, path, um.GetMovementType());
+
+        if (cost > um.unitInstance.currentActionPoints) return;
 
         um.MoveAlongPath(path);
 
         var finalTile = path[^1];
         unitManager.unitPositions.Remove(um.GetCurrentTile());
-        unitManager.unitPositions[finalTile] = selectedUnit;
+        unitManager.unitPositions[finalTile] = unitManager.selectedUnit;
 
-        selectedUnit = null;
+        unitManager.previouslySelectedUnit = unitManager.selectedUnit;
+        unitManager.selectedUnit = null;
 
         pathVFX.ClearHighlights();
         pathVFX.ClearPath();
