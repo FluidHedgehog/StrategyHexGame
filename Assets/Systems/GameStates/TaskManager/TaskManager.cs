@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TaskManager : MonoBehaviour
@@ -26,8 +24,10 @@ public class TaskManager : MonoBehaviour
         pathController = FindFirstObjectByType<PathController>();
         stateMachine = FindFirstObjectByType<BattleMapStateMachine>();
     }
+    
+    Queue<Vector3Int> path;
+    int pathCost;
 
-    List<Vector3Int> validatedPath;
 
     //------------------------------------------------------------------------------
     // Events Initialization
@@ -71,7 +71,7 @@ public class TaskManager : MonoBehaviour
         if (validatedUnit == null) return;
 
         var um = validatedUnit.GetComponent<UnitMovement>();
-        var reachable = pathController.DetectReachableTiles(um);
+        var reachable = pathController.DetectReachableTiles(unit);
         pathController.HighlightReachableTiles(reachable);
 
         stateMachine.ChangeState(new BattleActionState(stateMachine, this));
@@ -83,15 +83,14 @@ public class TaskManager : MonoBehaviour
 
     public void HandleGridChangeAction(Vector3Int mousePos)
     {
-        var path = pathController.DetectPath(mousePos);
-        validatedPath = pathController.ValidatePath(path, mousePos);
-        pathController.HighlightPathTiles(validatedPath);
+        (path, pathCost) = pathController.DetectPath(mousePos);
+        pathController.HighlightPathTiles(path);
     }
 
     public void HandleInteractAction(Vector3Int clickPos)
     {
-        pathController.MoveUnit(validatedPath);
-        unitManager.UpdateUnitUI(unitManager.previouslySelectedUnit);
+        pathController.MoveUnit(path, pathCost);
+        //unitManager.UpdateUnitUI(unitManager.previouslySelectedUnit);
         stateMachine.ChangeState(stateMachine.idleState);
     }
 

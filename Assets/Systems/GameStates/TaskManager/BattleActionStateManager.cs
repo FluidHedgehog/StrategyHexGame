@@ -23,7 +23,7 @@ public class BattleActionStateManager : MonoBehaviour
         if (validatedUnit == null) return;
 
         var um = validatedUnit.GetComponent<UnitMovement>();
-        var reachable = pathController.DetectReachableTiles(um);
+        var reachable = pathController.DetectReachableTiles(unit);
         pathController.HighlightReachableTiles(reachable);
     }
 

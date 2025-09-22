@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,11 +16,9 @@ public class PathController : MonoBehaviour
     //------------------------------------------------------------------------------    
     
     [SerializeField] private GridManager gridManager;
-    [SerializeField] private PathGridHelper gridHelper;
-    [SerializeField] private PathUnitHelper unitHelper;
     [SerializeField] private UnitManager unitManager;
     [SerializeField] private PathVFX pathVFX;
-    [SerializeField] private PathFinder pathFinder;
+    [SerializeField] private Pathfinding pathfinding;
     
     //------------------------------------------------------------------------------
     // Initialization
@@ -28,11 +27,10 @@ public class PathController : MonoBehaviour
     private void Awake()
     {
         if (gridManager == null) gridManager = FindFirstObjectByType<GridManager>();
-        if (gridHelper == null) gridHelper = FindFirstObjectByType<PathGridHelper>();
         if (unitManager == null) unitManager = FindFirstObjectByType<UnitManager>();
         if (pathVFX == null) pathVFX = FindFirstObjectByType<PathVFX>();
 
-        pathFinder = new PathFinder(gridManager, gridHelper, unitHelper);
+        pathfinding = new Pathfinding(gridManager);
     }
 
     //------------------------------------------------------------------------------
@@ -41,7 +39,7 @@ public class PathController : MonoBehaviour
 
     public GameObject DetectUnit(Vector3Int position)
     {
-        if (!unitManager.unitPositions.TryGetValue(position, out var unit) || unit == null) return null;
+        if (!gridManager.unitPositions.TryGetValue(position, out var unit) || unit == null) return null;
         else return unit;
     }
 
@@ -61,10 +59,11 @@ public class PathController : MonoBehaviour
     // Tell PathFinder to detect reachable tiles
     //------------------------------------------------------------------------------
 
-    public List<Vector3Int> DetectReachableTiles(UnitMovement unit)
+    public List<Vector3Int> DetectReachableTiles(GameObject unit)
     {
-        var reachable = pathFinder.GetReachable(unit);
-        return reachable;
+        var reachable = pathfinding.Dijkstra(unit);
+    
+        return new List<Vector3Int>(reachable.Keys);
     }
 
     //------------------------------------------------------------------------------
@@ -83,48 +82,18 @@ public class PathController : MonoBehaviour
     // Path Detection
     //------------------------------------------------------------------------------
 
-    public List<Vector3Int> DetectPath(Vector3Int targetTile)
+    public (Queue<Vector3Int>, int) DetectPath(Vector3Int targetTile)
     {
-        var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
-
-        var path = pathFinder.FindPath(
-            um.GetCurrentTile(), targetTile,
-            um.GetMovementType()
-        );
-        return path;
-    }
-    public List<Vector3Int> ValidatePath(List<Vector3Int> path, Vector3Int targetTile)
-    {
-        if (unitManager.unitPositions.ContainsKey(targetTile))
-        {
-            path.Remove(targetTile);
-            return path;
-        }
-
-        if (!path.Contains(targetTile))
-        {
-            var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
-            int budget = (int)um.unitInstance.currentActionPoints;
-            int cost = PathHelper.ComputePathCost(gridHelper, path, um.GetMovementType());
-            if (cost > budget)
-            {
-                path = PathHelper.TrimPathToBudget(gridHelper, path, um.GetMovementType(), budget);
-            }
-            if (budget <= 0)
-            {
-                return null;
-            }
-
-        }
-        return path;
+        var (path, pathCost) = pathfinding.AStar(unitManager.selectedUnit, targetTile);
+        return (path, pathCost);
     }
 
-    public void HighlightPathTiles(List<Vector3Int> path)
+    public void HighlightPathTiles(Queue<Vector3Int> path)
     {
+        var pathNew = path.ToList();
         pathVFX.ClearPath();
-        pathVFX.HighlightPath(path);
+        pathVFX.HighlightPath(pathNew);
     }
-
 
     public void ClearTiles()
     {
@@ -135,21 +104,15 @@ public class PathController : MonoBehaviour
     // Unit Movement
     //------------------------------------------------------------------------------
 
-    public void MoveUnit(List<Vector3Int> path)
+    public void MoveUnit(Queue<Vector3Int> path, int pathCost)
     {
-        if (path == null || path.Count < 2) return;
-
         var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
 
-        int cost = PathHelper.ComputePathCost(gridHelper, path, um.GetMovementType());
+        gridManager.unitPositions.Remove(um.GetCurrentTile());
 
-        if (cost > um.unitInstance.currentActionPoints) return;
+        um.StartCoroutine(um.FollowPath(path, pathCost));
 
-        um.MoveAlongPath(path);
-
-        var finalTile = path[^1];
-        unitManager.unitPositions.Remove(um.GetCurrentTile());
-        unitManager.unitPositions[finalTile] = unitManager.selectedUnit;
+        
 
         unitManager.previouslySelectedUnit = unitManager.selectedUnit;
         unitManager.selectedUnit = null;

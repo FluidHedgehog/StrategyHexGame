@@ -21,11 +21,11 @@ public class SideData : MonoBehaviour
     public List<SideData> hostileSides;
 
     [Header("References")]
-    [SerializeField] UnitManager unitManager;
+    [SerializeField] GridManager unitManager;
 
     private void Start()
     {
-        unitManager = FindFirstObjectByType<UnitManager>();
+        unitManager = FindFirstObjectByType<GridManager>();
         foreach (var unit in unitManager.unitsInGame)
         {
 
@@ -33,7 +33,7 @@ public class SideData : MonoBehaviour
             if (unitInstance.side == side)
             {
                 currentUnits.Add(unitInstance);
-                Debug.Log("Added unit: " + unit + " to site " + side);
+                //Debug.Log("Added unit: " + unit + " to site " + side);
             }
 
         }
