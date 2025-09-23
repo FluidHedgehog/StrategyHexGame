@@ -14,14 +14,16 @@ public class UnitMovement : MonoBehaviour
     [SerializeField] InputManager inputManager;
     [SerializeField] GridManager gridManager;
     [SerializeField] UnitManager unitManager;
+    [SerializeField] private TaskManager taskManager;
     [SerializeField] float speedFactor;
     private Pathfinding pathfinding;
 
     void Start()
     {
+        if (taskManager == null) taskManager = FindFirstObjectByType<TaskManager>();
         unitInstance = GetComponent<UnitInstance>();
         UpdateUnitTilePosition();
-        pathfinding = new Pathfinding(gridManager);
+        pathfinding = new Pathfinding(gridManager, taskManager);
         unitManager = FindFirstObjectByType<UnitManager>();
     }
 

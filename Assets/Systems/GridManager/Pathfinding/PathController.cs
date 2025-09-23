@@ -19,6 +19,7 @@ public class PathController : MonoBehaviour
     [SerializeField] private UnitManager unitManager;
     [SerializeField] private PathVFX pathVFX;
     [SerializeField] private Pathfinding pathfinding;
+    [SerializeField] private TaskManager taskManager;
     
     //------------------------------------------------------------------------------
     // Initialization
@@ -29,8 +30,9 @@ public class PathController : MonoBehaviour
         if (gridManager == null) gridManager = FindFirstObjectByType<GridManager>();
         if (unitManager == null) unitManager = FindFirstObjectByType<UnitManager>();
         if (pathVFX == null) pathVFX = FindFirstObjectByType<PathVFX>();
+        if (taskManager == null) taskManager = FindFirstObjectByType<TaskManager>();
 
-        pathfinding = new Pathfinding(gridManager);
+        pathfinding = new Pathfinding(gridManager, taskManager);
     }
 
     //------------------------------------------------------------------------------

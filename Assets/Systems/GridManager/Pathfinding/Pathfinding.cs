@@ -19,10 +19,12 @@ public class Pathfinding
     //------------------------------------------------------------------------------
 
     private readonly GridManager manager;
+    private readonly TaskManager task;
 
-    public Pathfinding(GridManager gridManager)
+    public Pathfinding(GridManager gridManager, TaskManager taskManager)
     {
         manager = gridManager;
+        task = taskManager;
     }
 
     //------------------------------------------------------------------------------
@@ -35,6 +37,17 @@ public class Pathfinding
         var moveType = um.GetMovementType();
         var start = um.GetCurrentTile();
         var budget = um.GetActionPoints();
+
+        if (goal == start)
+        {
+            task.HandleCancel();
+            return (new Queue<Vector3Int>(), 0);
+        }
+        if (manager.unitPositions.TryGetValue(goal, out GameObject occupantAtGoal) && occupantAtGoal != unit)
+        {
+            task.HandleCancel();
+            return (new Queue<Vector3Int>(), 0);
+        }
 
         var nextTileToGoal = new Dictionary<Vector3Int, Vector3Int>();
         var costToReachTile = new Dictionary<Vector3Int, int>();
@@ -49,7 +62,7 @@ public class Pathfinding
 
             foreach (var neighbor in GetNeighbors(current))
             {
-                if (!GetMovementCost(start, neighbor, moveType, out int cost)) continue;
+                if (!GetMovementCost(neighbor, moveType, out int cost, unit)) continue;
                 
                     var newCost = costToReachTile[current] + cost;
 
@@ -66,21 +79,25 @@ public class Pathfinding
             }
         }
 
+        if (!nextTileToGoal.ContainsKey(start))
+        {
+            task.HandleCancel();
+            return (new Queue<Vector3Int>(), 0);
+        }
 
-
-        Queue<Vector3Int> path = new Queue<Vector3Int>();
+        var path = new Queue<Vector3Int>();
         Vector3Int currentPathTile = start;
         int pathCost = 0;
 
         while (currentPathTile != goal)
         {
-            Vector3Int newStep = nextTileToGoal[currentPathTile];
-            if (GetMovementCost(start, newStep, moveType, out int stepCost)) pathCost += stepCost;
+            if (!nextTileToGoal.TryGetValue(currentPathTile, out Vector3Int newStep)) return (path, pathCost);
+            if (GetMovementCost(newStep, moveType, out int stepCost)) pathCost += stepCost;
+
             currentPathTile = newStep;
             path.Enqueue(currentPathTile);
-
         }
-        if (!nextTileToGoal.ContainsKey(start)) return (path, pathCost);
+
         return (path, pathCost);
     }
 
@@ -108,7 +125,7 @@ public class Pathfinding
 
             foreach (var neighbor in GetNeighbors(current))
             {
-                if (!GetMovementCost(start, neighbor, moveType, out int cost)) continue;
+                if (!GetMovementCost(neighbor, moveType, out int cost)) continue;
                 var newCost = costToReachTile[current] + cost;
 
                 if (newCost > budget) continue;
@@ -194,7 +211,7 @@ public class Pathfinding
         return null;
     }
 
-    public bool GetMovementCost(Vector3Int unitPosition, Vector3Int gridPosition, MovementType movementType, out int cost)
+    public bool GetMovementCost(Vector3Int gridPosition, MovementType movementType, out int cost, GameObject ignoreUnit = null)
     {
         var tileData = GetTileData(gridPosition);
         if (tileData == null)
@@ -202,7 +219,7 @@ public class Pathfinding
             cost = int.MaxValue;
             return false;
         }
-        if (DetectUnit(gridPosition, unitPosition))
+        if (manager.unitPositions.TryGetValue(gridPosition, out GameObject occupant) && occupant != ignoreUnit)
         {
             cost = int.MaxValue;
             return false;
@@ -234,10 +251,8 @@ public class Pathfinding
         return (Mathf.Abs(dx) + Mathf.Abs(dy) + Mathf.Abs(dz)) / 2;
     }
     
-    public bool DetectUnit(Vector3Int checkedPosition, Vector3Int unitPosition)
+    public bool DetectUnit(Vector3Int checkedPosition)
     {
-
-        if (checkedPosition == unitPosition) return false;
         return manager.unitPositions.ContainsKey(checkedPosition);
     }
 }
