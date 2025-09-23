@@ -6,6 +6,14 @@ using Utils;
 
 public class Pathfinding
 {
+
+
+
+// Deeply analyze the code. Why does pathfinding sometimes detect tiles with units as reachable, and sometimes not. Also, using A* i can sometimes move onto occupied tile, and sometimes i do not. Why?
+
+
+
+
     //------------------------------------------------------------------------------
     // class Initialization
     //------------------------------------------------------------------------------
@@ -70,6 +78,7 @@ public class Pathfinding
             if (GetMovementCost(start, newStep, moveType, out int stepCost)) pathCost += stepCost;
             currentPathTile = newStep;
             path.Enqueue(currentPathTile);
+
         }
         if (!nextTileToGoal.ContainsKey(start)) return (path, pathCost);
         return (path, pathCost);
