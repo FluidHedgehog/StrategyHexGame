@@ -33,6 +33,7 @@ public class SideData : MonoBehaviour
             if (unitInstance.side == side)
             {
                 currentUnits.Add(unitInstance);
+                unitInstance.sideData = this;
                 //Debug.Log("Added unit: " + unit + " to site " + side);
             }
 

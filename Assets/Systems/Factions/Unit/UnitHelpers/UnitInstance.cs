@@ -9,6 +9,7 @@ public class UnitInstance : MonoBehaviour
 
     public UnitData unitData;
     public Side side;
+    public SideData sideData;
     public bool isActive;
 
     //------------------------------------------------------------------------------

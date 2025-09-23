@@ -1,19 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using Utils;
 
 public class Pathfinding
 {
-
-
-
-// Deeply analyze the code. Why does pathfinding sometimes detect tiles with units as reachable, and sometimes not. Also, using A* i can sometimes move onto occupied tile, and sometimes i do not. Why?
-
-
-
-
     //------------------------------------------------------------------------------
     // class Initialization
     //------------------------------------------------------------------------------
@@ -38,16 +31,25 @@ public class Pathfinding
         var start = um.GetCurrentTile();
         var budget = um.GetActionPoints();
 
+
         if (goal == start)
         {
-            task.HandleCancel();
             return (new Queue<Vector3Int>(), 0);
         }
-        if (manager.unitPositions.TryGetValue(goal, out GameObject occupantAtGoal) && occupantAtGoal != unit)
+        
+        if (manager.unitPositions.TryGetValue(goal, out GameObject occupant) && occupant != unit)
         {
-            task.HandleCancel();
-            return (new Queue<Vector3Int>(), 0);
+            var candidates = new List<Vector3Int>();
+            foreach (var n in GetNeighbors(goal))
+            {
+                if (GetMovementCost(n, moveType, out _, unit)) candidates.Add(n);
+            }
+
+            if (candidates.Count == 0) return (new Queue<Vector3Int>(), 0);
+
+            goal = candidates.OrderBy(n => GetHexDistance(n, start)).First();
         }
+
 
         var nextTileToGoal = new Dictionary<Vector3Int, Vector3Int>();
         var costToReachTile = new Dictionary<Vector3Int, int>();
@@ -81,23 +83,34 @@ public class Pathfinding
 
         if (!nextTileToGoal.ContainsKey(start))
         {
-            task.HandleCancel();
+            //Debug.Log("No path found from start to goal");
             return (new Queue<Vector3Int>(), 0);
         }
 
         var path = new Queue<Vector3Int>();
         Vector3Int currentPathTile = start;
         int pathCost = 0;
-
+        int stepCost1 = 0;
         while (currentPathTile != goal)
         {
-            if (!nextTileToGoal.TryGetValue(currentPathTile, out Vector3Int newStep)) return (path, pathCost);
-            if (GetMovementCost(newStep, moveType, out int stepCost)) pathCost += stepCost;
+            if (!nextTileToGoal.TryGetValue(currentPathTile, out Vector3Int newStep)) 
+            {
+                //Debug.LogError($"Path construction failed at tile: {currentPathTile}");
+                return (path, pathCost);
+            }
+            if (GetMovementCost(newStep, moveType, out int stepCost))
+            {
+                stepCost1 = stepCost;
+                pathCost += stepCost;
+            }
 
             currentPathTile = newStep;
             path.Enqueue(currentPathTile);
         }
 
+       
+
+        //Debug.Log($"AStar completed: path length={path.Count}, total cost={pathCost}");
         return (path, pathCost);
     }
 
@@ -249,10 +262,5 @@ public class Pathfinding
         int dz = -(dx + dy);
 
         return (Mathf.Abs(dx) + Mathf.Abs(dy) + Mathf.Abs(dz)) / 2;
-    }
-    
-    public bool DetectUnit(Vector3Int checkedPosition)
-    {
-        return manager.unitPositions.ContainsKey(checkedPosition);
     }
 }

@@ -46,18 +46,6 @@ public class PathController : MonoBehaviour
     }
 
     //------------------------------------------------------------------------------
-    // Validates and selects unit
-    //------------------------------------------------------------------------------
-
-    public GameObject ValidateUnit(GameObject unit)
-    {
-        var ui = unit.GetComponent<UnitInstance>();
-        if (!ui.isActive) return null;
-        unitManager.selectedUnit = unit;
-        return unit;
-    }
-
-    //------------------------------------------------------------------------------
     // Tell PathFinder to detect reachable tiles
     //------------------------------------------------------------------------------
 
@@ -87,6 +75,7 @@ public class PathController : MonoBehaviour
     public (Queue<Vector3Int>, int) DetectPath(Vector3Int targetTile)
     {
         var (path, pathCost) = pathfinding.AStar(unitManager.selectedUnit, targetTile);
+
         return (path, pathCost);
     }
 
@@ -108,13 +97,26 @@ public class PathController : MonoBehaviour
 
     public void MoveUnit(Queue<Vector3Int> path, int pathCost)
     {
+        //Debug.Log($"MoveUnit called with path count: {path.Count}, pathCost: {pathCost}");
+        
+        if (unitManager.selectedUnit == null)
+        {
+            //Debug.LogError("No unit selected for movement!");
+            return;
+        }
+        
         var um = unitManager.selectedUnit.GetComponent<UnitMovement>();
+        if (um == null)
+        {
+            //Debug.LogError("Selected unit doesn't have UnitMovement component!");
+            return;
+        }
 
+        //Debug.Log($"Removing unit from current position: {um.GetCurrentTile()}");
         gridManager.unitPositions.Remove(um.GetCurrentTile());
 
+        //Debug.Log("Starting movement coroutine...");
         um.StartCoroutine(um.FollowPath(path, pathCost));
-
-        
 
         unitManager.previouslySelectedUnit = unitManager.selectedUnit;
         unitManager.selectedUnit = null;

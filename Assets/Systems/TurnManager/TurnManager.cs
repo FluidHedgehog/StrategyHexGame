@@ -36,7 +36,7 @@ public class TurnManager : MonoBehaviour
         }
         
         unitController.ActivateSideUnits(currentSide.currentUnits);
-        Debug.Log("Side changed to " + currentSide);
+        //Debug.Log("Side changed to " + currentSide);
     }
 }
 

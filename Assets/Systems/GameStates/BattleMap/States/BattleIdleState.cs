@@ -13,7 +13,7 @@ public class BattleIdleState : IBattleMapState
 
     public void Enter()
     {
-        Debug.Log("EnteredIdleState");
+       // Debug.Log("EnteredIdleState");
         taskManager.OnGridPositionChanged.AddListener(taskManager.HandleGridChangeIdle);
         taskManager.Interact.AddListener(taskManager.HandleInteractIdle);
         taskManager.Cancel.AddListener(taskManager.HandleCancel);
@@ -30,7 +30,7 @@ public class BattleIdleState : IBattleMapState
 
     public void Exit()
     {
-        Debug.Log("ExitIdleState");
+        //Debug.Log("ExitIdleState");
         taskManager.OnGridPositionChanged.RemoveListener(taskManager.HandleGridChangeIdle);
         taskManager.Interact.RemoveListener(taskManager.HandleInteractIdle);
         taskManager.Cancel.RemoveListener(taskManager.HandleCancel);

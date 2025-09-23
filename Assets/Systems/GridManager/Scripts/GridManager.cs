@@ -57,4 +57,14 @@ public class GridManager : MonoBehaviour
 
         unitPositions[newPos] = unit;
     }
+
+    public int ValidateTile(Vector3Int mousePos)
+    {
+        if (!unitPositions.ContainsKey(mousePos)) return 0;
+        else return 1;
+    }
+
+
+
+
 }

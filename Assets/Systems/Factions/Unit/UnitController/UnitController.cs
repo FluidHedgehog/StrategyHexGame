@@ -9,7 +9,7 @@ public class UnitController : MonoBehaviour
         foreach (var unit in unitInstances)
         {
             unit.isActive = true;
-            Debug.Log("Unit " + unit + " activated!");
+            //Debug.Log("Unit " + unit + " activated!");
         }
     }
 
@@ -28,7 +28,7 @@ public class UnitController : MonoBehaviour
         foreach (var unit in unitInstances)
         {
             unit.isActive = false;
-            Debug.Log("Unit " + unit + " deactivated!");
+            //Debug.Log("Unit " + unit + " deactivated!");
         }
     }
 }

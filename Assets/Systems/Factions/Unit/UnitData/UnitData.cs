@@ -19,6 +19,7 @@ public class UnitData : ScriptableObject
     public int agility;    // Dodge chance
     public int armor;      // Damage neglected 
     public int luck;       // Additional functionality
+    public int crowdControl;
 
     [Header("Movement")]
     public MovementType movementType; 
