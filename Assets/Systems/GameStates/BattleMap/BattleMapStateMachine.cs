@@ -8,6 +8,7 @@ public class BattleMapStateMachine : MonoBehaviour
 
     public BattleIdleState idleState;
     public BattleActionState actionState;
+    public BattleAttackState attackState;
 
     void Start()
     {
@@ -16,6 +17,7 @@ public class BattleMapStateMachine : MonoBehaviour
 
         idleState = new BattleIdleState(this, taskManager);
         actionState = new BattleActionState(this, taskManager);
+        attackState = new BattleAttackState(this, taskManager);
 
         ChangeState(idleState);
     }

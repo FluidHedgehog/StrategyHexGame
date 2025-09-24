@@ -21,6 +21,10 @@ MonoBehaviour:
   skill: 2
   agility: 2
   armor: 2
+  luck: 0
+  crowdControl: 0
   movementType: 0
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: a25ea47a55a760248b9d2dfc89c948c0, type: 2}
+  - {fileID: 11400000, guid: 4e77a8236df54964f8e21cda3ffd69bc, type: 2}
   advancementOptions: []

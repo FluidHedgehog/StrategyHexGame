@@ -11,6 +11,7 @@ public class PathVFX : MonoBehaviour
     [SerializeField] TileBase availableTile;
     [SerializeField] TileBase pathTile;
     [SerializeField] TileBase attackTile;
+    [SerializeField] TileBase attackRangeTile;
     [SerializeField] TileBase friendlyTile;
     [SerializeField] TileBase ownTile;
 
@@ -29,6 +30,14 @@ public class PathVFX : MonoBehaviour
         {
             stepMap.SetTile(step, pathTile);
         }
+    }
+
+    public void HighlightAttackRangeTiles(List<Vector3Int> range)
+    {
+        foreach (var tile in range) {
+            stepMap.SetTile(tile, attackRangeTile);    
+        }
+        
     }
 
     public void HighlightEnemy(Vector3Int enemy)

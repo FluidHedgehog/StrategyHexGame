@@ -159,7 +159,7 @@ public class Pathfinding
         return nextTileToGoal;
     }
 
-    public List<Vector3Int> ReturnPathDijkstra(Vector3Int start, Vector3Int goal, Dictionary<Vector3Int, Vector3Int> tilesToGoal)
+    /*public List<Vector3Int> ReturnPathDijkstra(Vector3Int start, Vector3Int goal, Dictionary<Vector3Int, Vector3Int> tilesToGoal)
     {
 
         var path = new List<Vector3Int>();
@@ -175,6 +175,39 @@ public class Pathfinding
         path.Reverse();
 
         return path;
+    }*/
+
+    //------------------------------------------------------------------------------
+    // Floodfill Algorythm
+    //------------------------------------------------------------------------------
+
+    public List<Vector3Int> Floodfill(Vector3Int start, int range)
+    {
+        var toEvaluate = new Queue<Vector3Int>();
+        var evaluated = new HashSet<Vector3Int>();
+        var distances = new Dictionary<Vector3Int, int>();
+
+        distances[start] = 0;
+
+        toEvaluate.Enqueue(start);
+        evaluated.Add(start);
+
+        while (toEvaluate.Count > 0)
+        {
+            var current = toEvaluate.Dequeue();
+            int currentDistance = distances[current];
+
+            if (currentDistance >= range) continue;
+            foreach (var neighbor in GetNeighbors(current))
+            {
+                if (evaluated.Contains(neighbor)) continue;
+                toEvaluate.Enqueue(neighbor);
+                evaluated.Add(neighbor);
+
+                distances[neighbor] = currentDistance + 1;
+            }
+        }
+        return evaluated.ToList();
     }
 
     //------------------------------------------------------------------------------
@@ -190,7 +223,7 @@ public class Pathfinding
         var neighbors = new List<Vector3Int>();
         foreach (var offset in offsets)
             neighbors.Add(pos + offset);
-        
+
         return neighbors;
     }
 
@@ -255,7 +288,7 @@ public class Pathfinding
         }
     }
 
-    public static int GetHexDistance(Vector3Int start, Vector3Int goal)
+    public int GetHexDistance(Vector3Int start, Vector3Int goal)
     {
         int dx = goal.x - start.x;
         int dy = goal.y - start.y;

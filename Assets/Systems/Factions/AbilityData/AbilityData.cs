@@ -1,7 +1,10 @@
 using UnityEngine;
 
 public enum Type { Melee, Ranged, Support, Magic }
+
 public enum Target { Enemy, Ally, Self, Terrain }
+public enum AoE { Tile, Circle, Cone, Line }
+
 public enum ReturnValue { Damage, Healing }
 public enum SpecialEffects { None, Shield, Haste, Wound, Poison, Slow, Stun }
 
@@ -15,10 +18,12 @@ public class AbilityData : ScriptableObject
     [Header("Classification")]
     public Type type;
     public Target target;
+    public AoE aoE;
     public ReturnValue returnValue;
     public SpecialEffects specialEffects;
 
     [Header("Base Values")]
+    public int cost;
     public int baseDamage;
     public int baseHealing;
     public int baseRange;

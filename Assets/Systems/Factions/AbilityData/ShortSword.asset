@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 430e031fba389c74e94bced85874a83c, type: 3}
-  m_Name: Dagger
+  m_Name: ShortSword
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  abilityName: Dagger
+  abilityName: Short Sword
   icon: {fileID: 0}
   type: 0
   target: 0
