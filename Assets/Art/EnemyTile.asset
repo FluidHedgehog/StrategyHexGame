@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55f747e8af38fbe4d8819f37be6fd5aa, type: 3}
-  m_Name: Hover
+  m_Name: EnemyTile
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 21300000, guid: 2b97431e898cf5b4f909fb21cf64eb6a, type: 3}
+  m_DefaultSprite: {fileID: 1089025226, guid: e30547c9422f651468ad9295d1e7fc9c, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules: []

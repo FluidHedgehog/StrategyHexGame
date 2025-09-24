@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class TaskManager : MonoBehaviour
     [SerializeField] AttackManager attackManager;
 
     [SerializeField] PathController pathController;
+
+    [SerializeField] PathVFX pathVFX;
 
     [SerializeField] BattleMapStateMachine stateMachine;
 
@@ -69,6 +72,7 @@ public class TaskManager : MonoBehaviour
 
     public void HandleGridChangeIdle(Vector3Int mousePos)
     {
+
     }
 
     public void HandleInteractIdle(Vector3Int clickPos)
@@ -88,19 +92,15 @@ public class TaskManager : MonoBehaviour
                 return;
             case 2:
                 // Unit is yours and not active.
-                Debug.Log(validatedUnitIdle + " not active!");
                 return;
             case 3:
                 // Unit is hostile.
-                Debug.Log(validatedUnitIdle + " is hostile!");
                 return;
             case 4:
                 // Unit is neutral.
-                Debug.Log(validatedUnitIdle + " is neutral!");
                 return;
             case 5:
                 // Unit is friendly.
-                Debug.Log(validatedUnitIdle + " is friendly!");
                 return;
         }
     }
@@ -119,41 +119,45 @@ public class TaskManager : MonoBehaviour
                 (path, pathCost) = pathController.DetectPath(mousePos);
                 pathController.HighlightPathTiles(path);
                 ActionStateCurrentCase = 0;
+                pathVFX.ClearUnit();
 
                 return;
 
             case 1:
                 // Unit detected
                 int currentCaseAction;
+                
+
                 (validatedUnit, currentCaseAction) = unitManager.ValidateUnit(unitManager.DetectUnit(mousePos));
+                var unitInstance = validatedUnit.GetComponent<UnitInstance>();
                 switch (currentCaseAction)
                 {
                     case 0:
                         ActionStateCurrentCase = int.MaxValue;
                         return;
-                    case 1:
-                        // Unit is yours and active.
-                        Debug.Log(validatedUnit + " is yours!");
+                    case 1: // Unit is yours and active.
+                        pathVFX.HighlightOwn(unitInstance.currentTile);
+
                         ActionStateCurrentCase = 1;
                         return;
-                    case 2:
-                        // Unit is yours and not active.
-                        Debug.Log(validatedUnit + " not active!");
+                    case 2: // Unit is yours and not active.
+                        pathVFX.HighlightOwn(unitInstance.currentTile);
+
                         ActionStateCurrentCase = 2;
                         return;
-                    case 3:
-                        // Unit is hostile.
-                        Debug.Log(validatedUnit + " is hostile!");
+                    case 3: // Unit is hostile.
+                        pathVFX.HighlightEnemy(unitInstance.currentTile);
+
                         ActionStateCurrentCase = 3;
                         return;
-                    case 4:
-                        // Unit is neutral.
-                        Debug.Log(validatedUnit + " is neutral!");
+                    case 4: // Unit is neutral.
+                        pathVFX.HighlightEnemy(unitInstance.currentTile);
+
                         ActionStateCurrentCase = 4;
                         return;
-                    case 5:
-                        // Unit is friendly.
-                        Debug.Log(validatedUnit + " is friendly!");
+                    case 5: // Unit is friendly.
+                        pathVFX.HighlightFriend(unitInstance.currentTile);
+
                         ActionStateCurrentCase = 5;
                         return;
                 }
@@ -220,5 +224,10 @@ public class TaskManager : MonoBehaviour
         unitManager.UpdateUnitUI(unitManager.previouslySelectedUnit);
         stateMachine.ChangeState(stateMachine.idleState);
     }
+
+    //------------------------------------------------------------------------------
+    // Hover
+    //------------------------------------------------------------------------------
+
 
 }

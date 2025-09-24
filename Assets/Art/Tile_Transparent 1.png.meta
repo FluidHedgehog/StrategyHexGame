@@ -270,8 +270,8 @@ TextureImporter:
       name: Tile_Transparent 1_7
       rect:
         serializedVersion: 2
-        x: 0
-        y: 144
+        x: 144
+        y: 216
         width: 72
         height: 72
       alignment: 0
@@ -292,8 +292,8 @@ TextureImporter:
       name: Tile_Transparent 1_8
       rect:
         serializedVersion: 2
-        x: 72
-        y: 144
+        x: 216
+        y: 216
         width: 72
         height: 72
       alignment: 0
@@ -314,8 +314,8 @@ TextureImporter:
       name: Tile_Transparent 1_9
       rect:
         serializedVersion: 2
-        x: 0
-        y: 72
+        x: 288
+        y: 216
         width: 72
         height: 72
       alignment: 0
@@ -337,7 +337,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 72
-        y: 72
+        y: 144
         width: 72
         height: 72
       alignment: 0
@@ -350,6 +350,72 @@ TextureImporter:
       bones: []
       spriteID: c5536465fafe01241b0f58bdaf48a850
       internalID: -1636027676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tile_Transparent 1_11
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 144
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d5908f41a0f2d745816956d2bcceaec
+      internalID: -183695831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tile_Transparent 1_12
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 144
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f614f062fe3bd8142be8bc70a3fa3958
+      internalID: 387321388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tile_Transparent 1_13
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 144
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5f88cc64f3e15a42980175a2a90b522
+      internalID: -334686691
       vertices: []
       indices: 
       edges: []
@@ -373,6 +439,9 @@ TextureImporter:
       Tile_Transparent 1_0: 322728435398454709
       Tile_Transparent 1_1: -1190236755
       Tile_Transparent 1_10: -1636027676
+      Tile_Transparent 1_11: -183695831
+      Tile_Transparent 1_12: 387321388
+      Tile_Transparent 1_13: -334686691
       Tile_Transparent 1_2: 1089025226
       Tile_Transparent 1_3: 386119299
       Tile_Transparent 1_4: 1363639725
